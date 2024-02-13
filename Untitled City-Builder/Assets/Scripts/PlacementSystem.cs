@@ -13,10 +13,17 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField] private ObjectsDatabaseSO objectsDatabaseSo;
     [SerializeField] private GameObject gridVisualization;
     private int selectedObjectID=-1;
-
+    private GridData floorData;
+    private GridData buildingData;
+    private Renderer previewRenderer;
+    private List<GameObject> placedGameObjects = new List<GameObject>();
+    
     private void Start()
     {
         StopPlacementMode();
+        floorData = new GridData();
+        buildingData = new GridData();
+        previewRenderer = cellIndicator.GetComponentInChildren<Renderer>();
     }
 
     public void StartPlacement(int ID)
@@ -49,9 +56,24 @@ public class PlacementSystem : MonoBehaviour
         if (inputManager.IsPointerOverUI()) { return; }
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
-
+        
+        bool CanPlace = CheckPlacementValidity(gridPosition, selectedObjectID);
+        if (!CanPlace) {return; }
+        
         GameObject newBuilding = Instantiate(objectsDatabaseSo.ObjectDataList[selectedObjectID].Prefab);
         newBuilding.transform.position = grid.CellToWorld(gridPosition) + new Vector3(0, cellIndicatorElevation, 0);
+        placedGameObjects.Add(newBuilding);
+        GridData selectedData = objectsDatabaseSo.ObjectDataList[selectedObjectID].ID == 0 ? floorData : buildingData;
+        selectedData.AddObjectAt(gridPosition,objectsDatabaseSo.ObjectDataList[selectedObjectID].Size,
+            objectsDatabaseSo.ObjectDataList[selectedObjectID].ID,
+            placedGameObjects.Count-1);
+
+    }
+
+    private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedID)
+    {
+        GridData selectedData = objectsDatabaseSo.ObjectDataList[selectedID].ID == 0 ? floorData : buildingData;
+        return selectedData.CanPlaceObjectAt(gridPosition, objectsDatabaseSo.ObjectDataList[selectedID].Size);
     }
 
     private void Update()
@@ -59,6 +81,9 @@ public class PlacementSystem : MonoBehaviour
         if (selectedObjectID < 0) { return; }
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+        
+        bool CanPlace = CheckPlacementValidity(gridPosition, selectedObjectID);
+        previewRenderer.material.color = CanPlace ? Color.white : Color.red;
         
         mouseIndicator.transform.position = mousePosition;
         cellIndicator.transform.position = grid.CellToWorld(gridPosition) + new Vector3(0, cellIndicatorElevation, 0);
