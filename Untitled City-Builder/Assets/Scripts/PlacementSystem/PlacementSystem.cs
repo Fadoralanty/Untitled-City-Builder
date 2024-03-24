@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
 {
+    public Action<int> OnObjectPlaced;
+    public Action<int> OnObjectRemoved;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private Grid grid;
+    public ObjectsDatabaseSO ObjectsDatabaseSo => objectsDatabaseSo;
     [SerializeField] private ObjectsDatabaseSO objectsDatabaseSo;
     [SerializeField] private GameObject gridVisualization;
     [SerializeField] private PlacementPreviewSystem previewSystem;
@@ -14,8 +17,8 @@ public class PlacementSystem : MonoBehaviour
     private GridData floorData;
     private GridData buildingData;
     private Vector3Int _lastDetectedPosition = Vector3Int.zero;
-    private IBuildingState _buildingState;
-    
+    private IBuildingState _currentBuildingState;
+    private int _currentObjectID;
     private void Start()
     {
         StopPlacementMode();
@@ -27,22 +30,23 @@ public class PlacementSystem : MonoBehaviour
     {
         StopPlacementMode();
         gridVisualization.SetActive(true);
-        _buildingState = new PlacementState(ID,grid,previewSystem, objectsDatabaseSo, floorData,buildingData, objectPlacer);
-        
+        _currentBuildingState = new PlacementState(ID,grid,previewSystem, objectsDatabaseSo, floorData,buildingData, objectPlacer);
         inputManager.OnClicked += PlaceBuilding;
         inputManager.OnExit += StopPlacementMode;
     }
     
     private void StopPlacementMode()
     {
-        if (_buildingState == null) { return; }
+        if (_currentBuildingState == null) { return; }
         
         gridVisualization.SetActive(false);
-        _buildingState.EndState();
+        _currentBuildingState.EndState();
         inputManager.OnClicked -= PlaceBuilding;
         inputManager.OnExit -= StopPlacementMode;
+        inputManager.OnClicked -= RemoveBuilding;
+
         _lastDetectedPosition= Vector3Int.zero;
-        _buildingState = null;
+        _currentBuildingState = null;
         
     }
 
@@ -50,18 +54,34 @@ public class PlacementSystem : MonoBehaviour
     {
         StopPlacementMode();
         gridVisualization.SetActive(true);
-        _buildingState = new RemovingState(grid, previewSystem, floorData, buildingData, objectPlacer);
-        inputManager.OnClicked += PlaceBuilding;
+        _currentBuildingState = new RemovingState(grid, previewSystem, floorData, buildingData, objectPlacer);
+        inputManager.OnClicked += RemoveBuilding;
         inputManager.OnExit += StopPlacementMode;
     }
-    private void PlaceBuilding()
+
+    private void ExecuteBuildingState()
     {
         if (inputManager.IsPointerOverUI()) { return; }
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
         
-        _buildingState.OnAction(gridPosition);
+        _currentObjectID = _currentBuildingState.OnAction(gridPosition);
+    }
+    private void PlaceBuilding()
+    {
+        ExecuteBuildingState();
+        if (_currentObjectID < 0) { return; }
+        if (inputManager.IsPointerOverUI()) { return; }
+        
 
+        OnObjectPlaced?.Invoke(_currentObjectID);
+    }    
+    private void RemoveBuilding()
+    {
+        ExecuteBuildingState();
+        if (_currentObjectID < 0) { return; }
+        if (inputManager.IsPointerOverUI()) { return; }
+        OnObjectRemoved?.Invoke(_currentObjectID);
     }
 
     // private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedID)
@@ -72,13 +92,13 @@ public class PlacementSystem : MonoBehaviour
 
     private void Update()
     {
-        if (_buildingState == null) { return; }
+        if (_currentBuildingState == null) { return; }
         
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
         if (_lastDetectedPosition == gridPosition) { return; }
         
-        _buildingState.UpdateState(gridPosition);
+        _currentBuildingState.UpdateState(gridPosition);
         _lastDetectedPosition = gridPosition;
     }
 }

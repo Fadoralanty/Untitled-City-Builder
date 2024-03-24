@@ -41,24 +41,28 @@ public class PlacementState : IBuildingState
         _previewSystem.HidePreview();
     }
 
-    public void OnAction(Vector3Int gridPosition)
+    public int OnAction(Vector3Int gridPosition)
     {
         bool CanPlace = CheckPlacementValidity(gridPosition, _selectedObjectIndex);
-        if (!CanPlace) {return; }
+        if (!CanPlace) {return -1; }
 
         int index = _objectPlacer.PlaceObject(_databaseSo.ObjectDataList[_selectedObjectIndex].Prefab,
             _grid.CellToWorld(gridPosition)+ new Vector3(0, cellIndicatorElevation, 0));
         
 
-        GridData selectedData = _databaseSo.ObjectDataList[_selectedObjectIndex].ID == 0 ? _floorData : _buildingsData;
+        //GridData selectedData = _databaseSo.ObjectDataList[_selectedObjectIndex].ID == 0 ? _floorData : _buildingsData;
+        GridData selectedData = _buildingsData;
+
         selectedData.AddObjectAt(gridPosition,_databaseSo.ObjectDataList[_selectedObjectIndex].Size,
             _databaseSo.ObjectDataList[_selectedObjectIndex].ID,
             index);
         _previewSystem.UpdatePosition(_grid.CellToWorld(gridPosition), false);
+        return _selectedObjectIndex;
     }
     private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedID)
     {
-        GridData selectedData = _databaseSo.ObjectDataList[selectedID].ID == 0 ? _floorData : _buildingsData;
+        //GridData selectedData = _databaseSo.ObjectDataList[selectedID].ID == 0 ? _floorData : _buildingsData;
+        GridData selectedData = _buildingsData;
         return selectedData.CanPlaceObjectAt(gridPosition, _databaseSo.ObjectDataList[selectedID].Size);
     }
 
