@@ -44,8 +44,10 @@ public class PlacementState : IBuildingState
     public int OnAction(Vector3Int gridPosition)
     {
         bool CanPlace = CheckPlacementValidity(gridPosition, _selectedObjectIndex);
-        if (!CanPlace) {return -1; }
+        if (!CanPlace) {return -1;}
 
+        if (!GameManager.Singleton.CanBuy(_selectedObjectIndex)) {return -1;}
+        
         int index = _objectPlacer.PlaceObject(_databaseSo.ObjectDataList[_selectedObjectIndex].Prefab,
             _grid.CellToWorld(gridPosition)+ new Vector3(0, cellIndicatorElevation, 0));
         

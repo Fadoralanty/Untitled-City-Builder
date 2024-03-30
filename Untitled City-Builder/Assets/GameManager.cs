@@ -9,10 +9,12 @@ public class GameManager : MonoBehaviour
     public int money;
     public int currentHourlyIncome;
     public int targetMoney;
+    [SerializeField] private int startingMoney = 15;
     [SerializeField] private float realSecondsPerHour = 15f;
     [SerializeField] private PlacementSystem placementSystem;
     [SerializeField] private UI ui;
     private Dictionary<int, int> buildingsIncome;
+    private Dictionary<int, int> buildingsPrice;
     private float _currentTime;
     
     private void Awake()
@@ -30,12 +32,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         buildingsIncome = new Dictionary<int, int>();
-        placementSystem.OnObjectPlaced += AddToIncome;
-        placementSystem.OnObjectRemoved += RemoveFromIncome;
-        
+        buildingsPrice = new Dictionary<int, int>();
+        placementSystem.OnObjectPlaced += BuyBuilding;
+        placementSystem.OnObjectRemoved += SellBuilding;
+        money = startingMoney;
         foreach (var objectData in placementSystem.ObjectsDatabaseSo.ObjectDataList)
         {
             buildingsIncome.Add(objectData.ID,objectData.HourlyIncome);
+            buildingsPrice.Add(objectData.ID,objectData.Price);
         }
         
         ui.UpdateTargetTMP();
@@ -58,28 +62,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void AddToIncome(int ID)
+    public bool CanBuy(int ID)
+    {
+        return money >= buildingsPrice[ID];
+    }
+    private void BuyBuilding(int ID)
     {
         currentHourlyIncome += buildingsIncome[ID];
+        money -= buildingsPrice[ID];
+        
         ui.UpdateIncome();
+        ui.UpdateMoney();
     }    
-    private void RemoveFromIncome(int ID)
+    private void SellBuilding(int ID)
     {
         currentHourlyIncome -= buildingsIncome[ID];
+        money += buildingsPrice[ID];
+
         ui.UpdateIncome();
+        ui.UpdateMoney();
+
     }
     
     public void LevelCompleted()
     {
-        Debug.Log("levelCompleted");
-        //show UI of level completed
+        ui.ShowVictoryScreen();
         //show level stats: time, money, score
     }
 
     private void OnDestroy()
     {
-        placementSystem.OnObjectPlaced -= AddToIncome;
-        placementSystem.OnObjectRemoved -= RemoveFromIncome;
+        placementSystem.OnObjectPlaced -= BuyBuilding;
+        placementSystem.OnObjectRemoved -= SellBuilding;
         buildingsIncome = null;
         placementSystem = null;
     }

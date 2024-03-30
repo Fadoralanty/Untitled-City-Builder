@@ -9,6 +9,12 @@ public class UI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI moneyText;
     [SerializeField] private TextMeshProUGUI incomeText;
     [SerializeField] private TextMeshProUGUI targetTMP;
+    [SerializeField] private GameObject VictoryScreen;
+
+    private void Awake()
+    {
+        VictoryScreen.SetActive(false);
+    }
 
     public void UpdateMoney()
     {
@@ -22,5 +28,12 @@ public class UI : MonoBehaviour
     public void UpdateTargetTMP()
     {
         targetTMP.text = "Target: " + GameManager.Singleton.targetMoney.ToString("C0");
+    }
+
+    public void ShowVictoryScreen()
+    {
+        
+        //victory screen stuff
+        VictoryScreen.SetActive(true);
     }
 }
