@@ -15,6 +15,12 @@ MonoBehaviour:
   ObjectDataList:
   - <Name>k__BackingField: House
     <ID>k__BackingField: 0
+    <FusionData>k__BackingField:
+      <CompatibleID>k__BackingField: 0
+      <RequiredAmount>k__BackingField: 3
+      <FusionResult>k__BackingField: {fileID: 1655219176990369711, guid: 52fd082fb27e49144a2ade3c06dcc38f,
+        type: 3}
+      <ResultId>k__BackingField: 1
     <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 6525533591458576124, guid: 0a8d0ff0d294a6a49ba8e0819ee49044,
       type: 3}
@@ -22,6 +28,11 @@ MonoBehaviour:
     <HourlyIncome>k__BackingField: 1
   - <Name>k__BackingField: ApartmentBuilding
     <ID>k__BackingField: 1
+    <FusionData>k__BackingField:
+      <CompatibleID>k__BackingField: 0
+      <RequiredAmount>k__BackingField: 0
+      <FusionResult>k__BackingField: {fileID: 0}
+      <ResultId>k__BackingField: 0
     <Size>k__BackingField: {x: 2, y: 2}
     <Prefab>k__BackingField: {fileID: 1655219176990369711, guid: 52fd082fb27e49144a2ade3c06dcc38f,
       type: 3}
@@ -29,6 +40,11 @@ MonoBehaviour:
     <HourlyIncome>k__BackingField: 5
   - <Name>k__BackingField: Road
     <ID>k__BackingField: 2
+    <FusionData>k__BackingField:
+      <CompatibleID>k__BackingField: 0
+      <RequiredAmount>k__BackingField: 0
+      <FusionResult>k__BackingField: {fileID: 0}
+      <ResultId>k__BackingField: 0
     <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 2484293462450602404, guid: e47aa342d6ba98545950d27bd7f6771f,
       type: 3}
@@ -36,6 +52,11 @@ MonoBehaviour:
     <HourlyIncome>k__BackingField: 0
   - <Name>k__BackingField: Store
     <ID>k__BackingField: 3
+    <FusionData>k__BackingField:
+      <CompatibleID>k__BackingField: 0
+      <RequiredAmount>k__BackingField: 0
+      <FusionResult>k__BackingField: {fileID: 0}
+      <ResultId>k__BackingField: 0
     <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 6581609512759077258, guid: 803c3f38c512c4348ab24dc62fc22973,
       type: 3}
@@ -43,6 +64,11 @@ MonoBehaviour:
     <HourlyIncome>k__BackingField: 2
   - <Name>k__BackingField: Hotel
     <ID>k__BackingField: 4
+    <FusionData>k__BackingField:
+      <CompatibleID>k__BackingField: 0
+      <RequiredAmount>k__BackingField: 0
+      <FusionResult>k__BackingField: {fileID: 0}
+      <ResultId>k__BackingField: 0
     <Size>k__BackingField: {x: 1, y: 1}
     <Prefab>k__BackingField: {fileID: 1794508849840197788, guid: 7632dea6676b4ed4fa0779c60fca5a58,
       type: 3}
@@ -50,6 +76,11 @@ MonoBehaviour:
     <HourlyIncome>k__BackingField: 10
   - <Name>k__BackingField: Luxury Hotel
     <ID>k__BackingField: 5
+    <FusionData>k__BackingField:
+      <CompatibleID>k__BackingField: 0
+      <RequiredAmount>k__BackingField: 0
+      <FusionResult>k__BackingField: {fileID: 0}
+      <ResultId>k__BackingField: 0
     <Size>k__BackingField: {x: 2, y: 2}
     <Prefab>k__BackingField: {fileID: 7430724470038750978, guid: 168bd7c38186f29469d5fe6b418230f4,
       type: 3}

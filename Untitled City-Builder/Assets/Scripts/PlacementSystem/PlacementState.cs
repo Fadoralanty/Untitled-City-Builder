@@ -47,20 +47,66 @@ public class PlacementState : IBuildingState
         if (!CanPlace) {return -1;}
 
         if (!GameManager.Singleton.CanBuy(_selectedObjectIndex)) {return -1;}
-        
-        int index = _objectPlacer.PlaceObject(_databaseSo.ObjectDataList[_selectedObjectIndex].Prefab,
-            _grid.CellToWorld(gridPosition)+ new Vector3(0, cellIndicatorElevation, 0));
-        
 
         //GridData selectedData = _databaseSo.ObjectDataList[_selectedObjectIndex].ID == 0 ? _floorData : _buildingsData;
         GridData selectedData = _buildingsData;
-
+        
+        //Fuse buildigns
+        if (CanFuseBuildings(gridPosition,_databaseSo.ObjectDataList[_selectedObjectIndex]))
+        {
+            Fuse(gridPosition, _databaseSo.ObjectDataList[_selectedObjectIndex]);
+            return _databaseSo.ObjectDataList[_selectedObjectIndex].FusionData.ResultId;
+        }
+        
+        //Place Building
+        int index = _objectPlacer.PlaceObject(_databaseSo.ObjectDataList[_selectedObjectIndex].Prefab,
+            _grid.CellToWorld(gridPosition) + new Vector3(0, cellIndicatorElevation, 0));
+        
         selectedData.AddObjectAt(gridPosition,_databaseSo.ObjectDataList[_selectedObjectIndex].Size,
             _databaseSo.ObjectDataList[_selectedObjectIndex].ID,
-            index);
+            index,
+            _databaseSo.ObjectDataList[_selectedObjectIndex].FusionData);
         _previewSystem.UpdatePosition(_grid.CellToWorld(gridPosition), false);
         return _selectedObjectIndex;
     }
+
+    private void Fuse(Vector3Int gridPosition, ObjectData building)
+    {
+        //Get compatible neighbour buildings
+        List<PlacementData> neighbours = _buildingsData.GetNeighbours(gridPosition, building.Size);
+        int gameObjectIndex;
+        foreach (var neighbour in neighbours)
+        {
+            if (building.FusionData.CompatibleID != neighbour.ID)
+            {
+                neighbours.Remove(neighbour);
+            }
+        }
+        //remove the required amount of buildings
+        for (int i = 0; i < building.FusionData.RequiredAmount; i++)
+        {
+            gameObjectIndex = _buildingsData.GetRepresentationIndex(neighbours[i].occupiedPositions[0]);
+            _buildingsData.RemoveObjectAt(neighbours[i].occupiedPositions[0]);
+            _objectPlacer.RemoveObject(gameObjectIndex);
+
+        }
+        //remove the building that we placed
+        // gameObjectIndex = _buildingsData.GetRepresentationIndex(gridPosition);
+        // _buildingsData.RemoveObjectAt(gridPosition);
+        // _objectPlacer.RemoveObject(gameObjectIndex);
+        //create Fusion building Result
+        int index = _objectPlacer.PlaceObject(building.FusionData.FusionResult,
+            _grid.CellToWorld(gridPosition)+ new Vector3(0, cellIndicatorElevation, 0));
+        
+        _buildingsData.AddObjectAt(gridPosition,_databaseSo.ObjectDataList[_selectedObjectIndex].Size,
+            _databaseSo.ObjectDataList[_selectedObjectIndex].ID,
+            index,
+            _databaseSo.ObjectDataList[_selectedObjectIndex].FusionData);
+        
+        _previewSystem.UpdatePosition(_grid.CellToWorld(gridPosition), false);
+
+    }
+
     private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedID)
     {
         //GridData selectedData = _databaseSo.ObjectDataList[selectedID].ID == 0 ? _floorData : _buildingsData;
@@ -68,6 +114,23 @@ public class PlacementState : IBuildingState
         return selectedData.CanPlaceObjectAt(gridPosition, _databaseSo.ObjectDataList[selectedID].Size);
     }
 
+    public bool CanFuseBuildings(Vector3Int gridPosition, ObjectData building)
+    {
+        GridData selectedData = _buildingsData;
+        List<PlacementData> neighbours = selectedData.GetNeighbours(gridPosition, building.Size);
+        if (neighbours.Count<=0) { return false;}
+
+        int CurrentCompatibleNeighbours = 0;
+        foreach (var neighbour in neighbours)
+        {
+            if (building.FusionData.CompatibleID == neighbour.ID)
+            {
+                CurrentCompatibleNeighbours += 1;
+            }
+        }
+
+        return CurrentCompatibleNeighbours >= building.FusionData.RequiredAmount;
+    }
     public void UpdateState(Vector3Int gridPosition)
     {
         bool CanPlace = CheckPlacementValidity(gridPosition, _selectedObjectIndex);

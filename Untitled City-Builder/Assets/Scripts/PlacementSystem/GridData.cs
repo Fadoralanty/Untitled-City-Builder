@@ -7,10 +7,10 @@ public class GridData
 {
     private Dictionary<Vector3Int, PlacementData> PlacedObjects=new ();
 
-    public void AddObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int ID, int placedObjectIndex)
+    public void AddObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int ID, int placedObjectIndex, FusionData fusionData)
     {
         List<Vector3Int> positionsToOccupy = CalculatePositions(gridPosition, objectSize);
-        PlacementData data = new PlacementData(positionsToOccupy, ID, placedObjectIndex);
+        PlacementData data = new PlacementData(positionsToOccupy, ID, placedObjectIndex, fusionData);
         foreach (var position in positionsToOccupy)
         {
             if (PlacedObjects.ContainsKey(position))
@@ -48,21 +48,20 @@ public class GridData
         }
         return true;
     }
-    public PlacementData[] GetNeighbours(Vector3Int gridPosition, Vector2Int objectSize)
+    public List<PlacementData> GetNeighbours(Vector3Int gridPosition, Vector2Int objectSize)
     {
-        List<Vector3Int> occupiedPositions = CalculateOuterPositions(gridPosition, objectSize);
-        foreach (var position in occupiedPositions)
+        List<Vector3Int> outerPositions = CalculateOuterPositions(gridPosition, objectSize);
+        List<PlacementData>  neighbours = new List<PlacementData>();
+        for (var i = 0; i < outerPositions.Count; i++)
         {
+            var position = outerPositions[i];
             //if position has a neighbour of compatible type
             if (PlacedObjects.ContainsKey(position) /* && hasCompatibleType*/)
             {
-                //(if applicable when the current amopunt of compatible neighbours > required to combine) delete previous buildings
-                //(if applicable) place new building
-                //produce more money
+                neighbours.Add(PlacedObjects[position]);
             }
         }
-        PlacementData[] neighbours = new PlacementData[] { };
-        
+
         return neighbours;
     }
     private List<Vector3Int> CalculateOuterPositions(Vector3Int gridPosition, Vector2Int objectSize)
@@ -106,17 +105,19 @@ public class GridData
         }
     }
 }
-
+[System.Serializable]
 public class PlacementData
 {
     public List<Vector3Int> occupiedPositions;
     public int ID { get; private set; }
     public int PlacedObjectIndex { get; private set; }
-    public PlacementData(List<Vector3Int> occupiedPositions, int id, int placedObjectIndex)
+    public FusionData FusionData { get; private set; }
+    public PlacementData(List<Vector3Int> occupiedPositions, int id, int placedObjectIndex, FusionData fusionData)
     {
         this.occupiedPositions = occupiedPositions;
         ID = id;
         PlacedObjectIndex = placedObjectIndex;
+        FusionData = fusionData;
     }
 
     
