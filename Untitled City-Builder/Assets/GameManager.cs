@@ -12,9 +12,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int startingMoney = 15;
     [SerializeField] private float realSecondsPerHour = 15f;
     [SerializeField] private PlacementSystem placementSystem;
+    [SerializeField] private ObjectPlacer objectPlacer;
     [SerializeField] private UI ui;
     private Dictionary<int, int> buildingsIncome;
-    private Dictionary<int, int> buildingsPrice;
+    private Dictionary<int, int> buildingsBuyPrice;
+    private Dictionary<int, int> buildingsSellPrice;
     private float _currentTime;
     
     private void Awake()
@@ -32,14 +34,15 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         buildingsIncome = new Dictionary<int, int>();
-        buildingsPrice = new Dictionary<int, int>();
-        placementSystem.OnObjectPlaced += BuyBuilding;
-        placementSystem.OnObjectRemoved += SellBuilding;
+        buildingsBuyPrice = new Dictionary<int, int>();
+        objectPlacer.onObjectPlaced += PlaceBuildingHandler;
+        objectPlacer.onObjectRemoved += RemoveBuildingHandler;
         money = startingMoney;
         foreach (var objectData in placementSystem.ObjectsDatabaseSo.ObjectDataList)
         {
             buildingsIncome.Add(objectData.ID,objectData.HourlyIncome);
-            buildingsPrice.Add(objectData.ID,objectData.Price);
+            buildingsBuyPrice.Add(objectData.ID,objectData.BuyPrice);
+            buildingsSellPrice.Add(objectData.ID,objectData.SellPrice);
         }
         
         ui.UpdateTargetTMP();
@@ -64,24 +67,40 @@ public class GameManager : MonoBehaviour
 
     public bool CanBuy(int ID)
     {
-        return money >= buildingsPrice[ID];
+        return money >= buildingsBuyPrice[ID];
     }
-    private void BuyBuilding(int ID)
+    private void PlaceBuildingHandler(int ID, PlacingType placingType)
     {
-        currentHourlyIncome += buildingsIncome[ID];
-        money -= buildingsPrice[ID];
-        
+        switch (placingType)
+        {
+            case PlacingType.Buy:
+                currentHourlyIncome += buildingsIncome[ID];
+                money -= buildingsBuyPrice[ID];
+                break;
+            case PlacingType.BuyFuse:
+                money -= buildingsBuyPrice[ID];
+                break;
+            case PlacingType.Fuse:
+                currentHourlyIncome += buildingsIncome[ID];
+                break;
+        }
         ui.UpdateIncome();
         ui.UpdateMoney();
     }    
-    private void SellBuilding(int ID)
+    private void RemoveBuildingHandler(int ID, PlacingType placingType)
     {
-        currentHourlyIncome -= buildingsIncome[ID];
-        money += buildingsPrice[ID];
-
+        switch (placingType)
+        {
+            case PlacingType.Sell:
+                currentHourlyIncome -= buildingsIncome[ID];
+                money += buildingsSellPrice[ID];
+                break;
+            case PlacingType.Fuse:
+                currentHourlyIncome -= buildingsIncome[ID];
+                break;
+        }
         ui.UpdateIncome();
         ui.UpdateMoney();
-
     }
     
     public void LevelCompleted()
@@ -92,9 +111,17 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        placementSystem.OnObjectPlaced -= BuyBuilding;
-        placementSystem.OnObjectRemoved -= SellBuilding;
+        objectPlacer.onObjectPlaced -= PlaceBuildingHandler;
+        objectPlacer.onObjectRemoved -= RemoveBuildingHandler;
         buildingsIncome = null;
         placementSystem = null;
     }
+}
+
+public enum PlacingType
+{
+    Buy,
+    BuyFuse,
+    Sell,
+    Fuse
 }

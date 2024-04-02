@@ -28,7 +28,7 @@ public class RemovingState : IBuildingState
         _previewSystem.HidePreview();
     }
 
-    public int OnAction(Vector3Int gridPosition)
+    public void OnAction(Vector3Int gridPosition)
     {
         GridData selectedData = null;
         int objID;
@@ -43,21 +43,20 @@ public class RemovingState : IBuildingState
         if (selectedData==null)
         {
             //feedback that there is nothing to remove
-            return -1;
+            return;
         }
         else
         {
             gameObjectIndex = selectedData.GetRepresentationIndex(gridPosition);
             objID = selectedData.GetIDOfPlacedObject(gridPosition);
-            if (gameObjectIndex==-1) {return -1; }
+            if (gameObjectIndex==-1) {return; }
 
             selectedData.RemoveObjectAt(gridPosition);
-            _objectPlacer.RemoveObject(gameObjectIndex);
+            _objectPlacer.RemoveObject(gameObjectIndex, objID, PlacingType.Sell);
         }
 
         Vector3 cellPosition = _grid.CellToWorld(gridPosition);
         _previewSystem.UpdatePosition(cellPosition,CheckIfSelectionIsValid(gridPosition));
-        return objID;
     }
 
     private bool CheckIfSelectionIsValid(Vector3Int gridPosition)

@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
 {
-    public Action<int> OnObjectPlaced;
-    public Action<int> OnObjectRemoved;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private Grid grid;
     public ObjectsDatabaseSO ObjectsDatabaseSo => objectsDatabaseSo;
@@ -18,7 +16,6 @@ public class PlacementSystem : MonoBehaviour
     private GridData buildingData;
     private Vector3Int _lastDetectedPosition = Vector3Int.zero;
     private IBuildingState _currentBuildingState;
-    private int _currentObjectID;
     private void Start()
     {
         StopPlacementMode();
@@ -64,24 +61,17 @@ public class PlacementSystem : MonoBehaviour
         if (inputManager.IsPointerOverUI()) { return; }
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
         Vector3Int gridPosition = grid.WorldToCell(mousePosition);
-        
-        _currentObjectID = _currentBuildingState.OnAction(gridPosition);
+        _currentBuildingState.OnAction(gridPosition);
     }
     private void PlaceBuilding()
     {
-        ExecuteBuildingState();
-        if (_currentObjectID < 0) { return; }
         if (inputManager.IsPointerOverUI()) { return; }
-        
-
-        OnObjectPlaced?.Invoke(_currentObjectID);
+        ExecuteBuildingState();
     }    
     private void RemoveBuilding()
     {
-        ExecuteBuildingState();
-        if (_currentObjectID < 0) { return; }
         if (inputManager.IsPointerOverUI()) { return; }
-        OnObjectRemoved?.Invoke(_currentObjectID);
+        ExecuteBuildingState();
     }
 
     // private bool CheckPlacementValidity(Vector3Int gridPosition, int selectedID)

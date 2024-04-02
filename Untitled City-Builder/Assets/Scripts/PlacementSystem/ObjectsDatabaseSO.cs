@@ -25,6 +25,7 @@ public class ObjectData
     [field: SerializeField] public FusionData FusionData { get; private set; }
     [field: SerializeField] public Vector2Int Size { get; private set; } = Vector2Int.one;
     [field: SerializeField] public GameObject Prefab { get; private set; }
-    [field: SerializeField] public int Price { get; private set; }
+    [field: SerializeField] public int BuyPrice { get; private set; }
+    [field: SerializeField] public int SellPrice { get; private set; }
     [field: SerializeField] public int HourlyIncome { get; private set; }
 }

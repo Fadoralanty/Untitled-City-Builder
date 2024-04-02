@@ -396,9 +396,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Remove Mode
-
-'
+  m_text: Sell Buildings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2293,7 +2291,7 @@ GameObject:
   - component: {fileID: 826277465}
   - component: {fileID: 826277464}
   m_Layer: 5
-  m_Name: RemoveMode
+  m_Name: Sell Buildings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4876,6 +4874,11 @@ PrefabInstance:
       objectReference: {fileID: 246088146}
     - target: {fileID: 9126977438202530723, guid: 8cf0dec8fa4b57649872f9c15108f240,
         type: 3}
+      propertyPath: objectPlacer
+      value: 
+      objectReference: {fileID: 1769635237}
+    - target: {fileID: 9126977438202530723, guid: 8cf0dec8fa4b57649872f9c15108f240,
+        type: 3}
       propertyPath: startingMoney
       value: 25
       objectReference: {fileID: 0}
@@ -4900,9 +4903,9 @@ SceneRoots:
   - {fileID: 1211304300}
   - {fileID: 1649982228}
   - {fileID: 688127264}
+  - {fileID: 1769635238}
   - {fileID: 1534906363}
   - {fileID: 1783227859}
   - {fileID: 556117260}
   - {fileID: 246088145}
   - {fileID: 182949619}
-  - {fileID: 1769635238}

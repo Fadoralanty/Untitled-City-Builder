@@ -99,6 +99,7 @@ public class GridData
     }
     public void RemoveObjectAt(Vector3Int gridPosition)
     {
+        if (!PlacedObjects.ContainsKey(gridPosition)) { return; }
         foreach (var pos in PlacedObjects[gridPosition].occupiedPositions)
         {
             PlacedObjects.Remove(pos);
@@ -114,7 +115,7 @@ public class PlacementData
     public FusionData FusionData { get; private set; }
     public PlacementData(List<Vector3Int> occupiedPositions, int id, int placedObjectIndex, FusionData fusionData)
     {
-        this.occupiedPositions = occupiedPositions;
+        this.occupiedPositions = occupiedPositions; 
         ID = id;
         PlacedObjectIndex = placedObjectIndex;
         FusionData = fusionData;
