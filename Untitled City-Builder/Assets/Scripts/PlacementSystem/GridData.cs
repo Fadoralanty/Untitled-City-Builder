@@ -48,6 +48,7 @@ public class GridData
         }
         return true;
     }
+    
     public List<PlacementData> GetNeighbours(Vector3Int gridPosition, Vector2Int objectSize)
     {
         List<Vector3Int> outerPositions = CalculateOuterPositions(gridPosition, objectSize);
@@ -64,6 +65,7 @@ public class GridData
 
         return neighbours;
     }
+    
     private List<Vector3Int> CalculateOuterPositions(Vector3Int gridPosition, Vector2Int objectSize)
     {
         List<Vector3Int> returnValues = new List<Vector3Int>();

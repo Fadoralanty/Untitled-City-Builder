@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     {
         buildingsIncome = new Dictionary<int, int>();
         buildingsBuyPrice = new Dictionary<int, int>();
+        buildingsSellPrice = new Dictionary<int, int>();
         objectPlacer.onObjectPlaced += PlaceBuildingHandler;
         objectPlacer.onObjectRemoved += RemoveBuildingHandler;
         money = startingMoney;

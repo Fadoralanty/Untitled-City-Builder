@@ -30,8 +30,8 @@ MonoBehaviour:
   - <Name>k__BackingField: ApartmentBuilding
     <ID>k__BackingField: 1
     <FusionData>k__BackingField:
-      <CompatibleID>k__BackingField: 0
-      <RequiredAmount>k__BackingField: 0
+      <CompatibleID>k__BackingField: -1
+      <RequiredAmount>k__BackingField: 9999
       <FusionResult>k__BackingField: {fileID: 0}
       <ResultId>k__BackingField: 0
     <Size>k__BackingField: {x: 2, y: 2}
@@ -43,8 +43,8 @@ MonoBehaviour:
   - <Name>k__BackingField: Road
     <ID>k__BackingField: 2
     <FusionData>k__BackingField:
-      <CompatibleID>k__BackingField: 0
-      <RequiredAmount>k__BackingField: 0
+      <CompatibleID>k__BackingField: -1
+      <RequiredAmount>k__BackingField: 999
       <FusionResult>k__BackingField: {fileID: 0}
       <ResultId>k__BackingField: 0
     <Size>k__BackingField: {x: 1, y: 1}

@@ -48,6 +48,9 @@ public class PlacementState : IBuildingState
 
         if (!GameManager.Singleton.CanBuy(_selectedObjectIndex)) {return;}
 
+        if (!IsNextToRoad(gridPosition, _databaseSo.ObjectDataList[_selectedObjectIndex].Size, 2)
+            && _selectedObjectIndex != 2) { return; }
+
         //GridData selectedData = _databaseSo.ObjectDataList[_selectedObjectIndex].ID == 0 ? _floorData : _buildingsData;
         GridData selectedData = _buildingsData;
         
@@ -127,13 +130,17 @@ public class PlacementState : IBuildingState
         return selectedData.CanPlaceObjectAt(gridPosition, _databaseSo.ObjectDataList[selectedID].Size);
     }
 
-    private bool IsNextToRoad(Vector3Int gridPosition)
+    public bool IsNextToRoad(Vector3Int gridPosition, Vector2Int objectSize, int roadId)
     {
-        //TODO this function that checks if a placed building is next to a road
-        Vector3 FowardPositon=gridPosition+Vector3Int.forward;
-        Vector3 BackPositon=gridPosition+Vector3Int.back;
-        Vector3 RightPositon=gridPosition+Vector3Int.right;
-        Vector3 LeftPositon=gridPosition+Vector3Int.left;
+        List<PlacementData> neighbours = new List<PlacementData>();
+        neighbours = _buildingsData.GetNeighbours(gridPosition, objectSize);
+        foreach (var neighbour in neighbours)
+        {
+            if (neighbour.ID == roadId)//Road Id is 2
+            {
+                return true;
+            }
+        }
         return false;
     }
     public bool CanFuseBuildings(Vector3Int gridPosition, ObjectData building)
