@@ -79,13 +79,15 @@ public class PlacementState : IBuildingState
         List<PlacementData> neighbours = _buildingsData.GetNeighbours(gridPosition, building.Size);
         int gameObjectIndex;
         int objId;
-        foreach (var neighbour in neighbours)
+        for (var i = neighbours.Count-1; i >= 0 ; i--)
         {
+            var neighbour = neighbours[i];
             if (building.FusionData.CompatibleID != neighbour.ID)
             {
-                neighbours.Remove(neighbour);
+                neighbours.RemoveAt(i);
             }
         }
+        
         //remove the required amount of buildings
         for (int i = 0; i < building.FusionData.RequiredAmount; i++)
         {

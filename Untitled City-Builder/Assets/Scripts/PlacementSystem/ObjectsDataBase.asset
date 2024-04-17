@@ -43,7 +43,7 @@ MonoBehaviour:
   - <Name>k__BackingField: Road
     <ID>k__BackingField: 2
     <FusionData>k__BackingField:
-      <CompatibleID>k__BackingField: -1
+      <CompatibleID>k__BackingField: 9999999
       <RequiredAmount>k__BackingField: 999
       <FusionResult>k__BackingField: {fileID: 0}
       <ResultId>k__BackingField: 0
