@@ -25,6 +25,11 @@ public class UI : MonoBehaviour
         incomeText.text = GameManager.Singleton.currentHourlyIncome.ToString("C0") + "/h";
     }
 
+    public void OpenSurveyURL()
+    {
+        Application.OpenURL("https://forms.gle/hFNVAd2gaW4e6JWr8");
+    }
+
     public void UpdateTargetTMP()
     {
         targetTMP.text = "Target: " + GameManager.Singleton.targetMoney.ToString("C0");

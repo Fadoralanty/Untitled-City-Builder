@@ -12,8 +12,10 @@ public class CameraController : MonoBehaviour
     public float movementSpeed;
     public float movementTime;
     public float rotationAmount;
+    public Vector3 cameraBounds;
     public Vector3 zoomAmount;
-
+    public Vector3 minZoom;
+    public Vector3 maxZoom;
     public Vector3 newPosition;
     public Quaternion newRotation;
     public Vector3 newZoom;
@@ -73,13 +75,48 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetAxis("Mouse ScrollWheel")>0f)
         {
-            newZoom += zoomAmount;
-            
+            Vector3 zoom = newZoom + zoomAmount;
+            if (zoom.y < minZoom.y && zoom.z > minZoom.z)
+            {
+                newZoom = new Vector3(0, minZoom.y, minZoom.z);
+            }
+            else
+            {
+                newZoom += zoomAmount;
+            }
         }        
         if (Input.GetAxis("Mouse ScrollWheel")<0f)
         {
+            Vector3 zoom = newZoom - zoomAmount;
+            if (zoom.y > minZoom.y && zoom.z < minZoom.z)
+            {
+                newZoom = new Vector3(0, maxZoom.y, maxZoom.z);
+            }
+            else
+            {
+                newZoom += zoomAmount;
+            }
             newZoom -= zoomAmount;
             
+        }
+
+        if (newPosition.x > cameraBounds.x)
+        {
+            newPosition.x = cameraBounds.x;
+        }
+
+        if (newPosition.x < -cameraBounds.x)
+        {
+            newPosition.x = -cameraBounds.x;
+        }        
+        if (newPosition.z > cameraBounds.z)
+        {
+            newPosition.z = cameraBounds.z;
+        }
+
+        if (newPosition.z < -cameraBounds.z)
+        {
+            newPosition.z = -cameraBounds.z;
         }
         transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTime);
